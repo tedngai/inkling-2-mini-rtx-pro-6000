@@ -1,0 +1,19 @@
+{
+  "prompt": "Explain in detail how a GPU renders a triangle.",
+  "request": {
+    "model": "inkling-2-mini",
+    "max_tokens": 320,
+    "reasoning_effort": "low",
+    "temperature": 0
+  },
+  "completion_tokens": 320,
+  "wall_seconds": 1.78,
+  "tokens_per_second": 179.9,
+  "content_prefix": "A GPU renders a triangle by turning a mathematical primitive into colored pixels on the screen. The exact implementation",
+  "conditions": {
+    "concurrency": 1,
+    "kv_cache_dtype": "fp8",
+    "speculative_decoding": "DSpark x7 probabilistic",
+    "note": "single measurement; not a benchmark matrix"
+  }
+}

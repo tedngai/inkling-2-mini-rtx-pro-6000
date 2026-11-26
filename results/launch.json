@@ -1,0 +1,53 @@
+{
+  "captured": "2026-11-25",
+  "host": {
+    "hostname": "at-ai-genllm",
+    "gpu": "NVIDIA RTX Pro 6000 Blackwell DC-4-96Q",
+    "compute_capability": "12.0",
+    "vram_gib": 96,
+    "driver": "580.159.03",
+    "cuda_runtime": "13.2"
+  },
+  "software": {
+    "python": "3.12.16",
+    "vllm": "0.34.1rc1.dev159+ged686ccec",
+    "torch": "2.14.0+cu132",
+    "transformers": "5.24.1"
+  },
+  "model": {
+    "repo": "thinkingmachines/Inkling-2-Mini",
+    "revision": "b85c3cfa615fc413cc9af3379f491b963f3b586a",
+    "served_model_name": "inkling-2-mini",
+    "quantization": "modelopt NVFP4 + MXFP8"
+  },
+  "serve_args": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "tensor_parallel_size": 1,
+    "gpu_memory_utilization": 0.90,
+    "kv_cache_dtype": "fp8",
+    "max_model_len": 131072,
+    "max_num_batched_tokens": 2048,
+    "max_num_seqs": 8,
+    "enable_prefix_caching": true,
+    "reasoning_parser": "inkling",
+    "tool_call_parser": "inkling",
+    "enable_auto_tool_choice": true,
+    "speculative_config": {
+      "method": "dspark",
+      "num_speculative_tokens": 7,
+      "draft_sample_method": "probabilistic"
+    }
+  },
+  "kv_cache": {
+    "tokens": 1449079,
+    "memory_gib": 65.78,
+    "multiple_of_128k": 11.06,
+    "layout": "LBNHC",
+    "extensible_cache": false,
+    "extensible_cache_note": "disabled by CUDA error 801 on this driver; sized from profiling estimates"
+  },
+  "compat_patches": [
+    "patch_sm120_vision.py: SDPA fallback for the Inkling2 vision encoder on sm_120"
+  ]
+}

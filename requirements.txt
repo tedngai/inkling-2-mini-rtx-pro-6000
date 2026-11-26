@@ -1,0 +1,7 @@
+# Reference versions only. Do not pip install this file directly: the Inkling2
+# model needs a vLLM nightly wheel, which ./install.sh resolves from
+# https://wheels.vllm.ai/nightly/cu132/ into a local Python 3.12 venv.
+python==3.12.16
+vllm==0.34.1rc1.dev159+ged686ccec
+torch==2.14.0+cu132
+transformers==5.24.1

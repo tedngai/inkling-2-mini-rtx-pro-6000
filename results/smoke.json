@@ -1,0 +1,29 @@
+{
+  "endpoint": "http://127.0.0.1:8000",
+  "checks": {
+    "health": {"status": 200, "pass": true},
+    "models": {"ids": ["inkling-2-mini"], "pass": true},
+    "arithmetic": {
+      "prompt": "What is 19 + 23? Answer with just the number.",
+      "content": "42",
+      "pass": true,
+      "reasoning_effort": "low",
+      "temperature": 0,
+      "usage": {
+        "prompt_tokens": 29,
+        "completion_tokens": 33,
+        "reasoning_tokens": 25,
+        "total_tokens": 62
+      },
+      "latency_s": 1.95,
+      "tokens_per_second": 16.9
+    },
+    "vision": {
+      "input": "solid red 128x128 PNG",
+      "question": "What color is this image? One word.",
+      "content": "Red",
+      "pass": true
+    }
+  },
+  "all_pass": true
+}

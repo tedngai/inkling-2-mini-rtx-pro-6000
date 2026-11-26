@@ -1,0 +1,71 @@
+# Recipe: Inkling-2-Mini on 1x RTX Pro 6000 Blackwell
+# Adapted from recipe/inkling-2-mini.yaml in
+# https://github.com/tedngai/inkling-2-mini-dgx-spark
+#
+# thinkingmachines/Inkling-2-Mini (26B total / 5.4B effective active,
+# NVFP4 experts + MXFP8 tail layers). Native checkpoint, no requantization.
+
+recipe_version: "1"
+name: Inkling-2-Mini-RTX-Pro-6000
+description: >-
+  Native vLLM nightly serving of Inkling-2-Mini on one sm_120 GPU with FP8 KV,
+  DSpark speculative decoding, 8 admission slots and a 128K window.
+
+model: thinkingmachines/Inkling-2-Mini
+revision: b85c3cfa615fc413cc9af3379f491b963f3b586a
+
+cluster_only: false
+solo_only: true
+
+# No Docker on the target host; install.sh creates a local Python 3.12 venv.
+container: null
+runtime:
+  python: "3.12"
+  vllm: "0.34.1rc1.dev159+ged686ccec"  # cu132 nightly wheel
+  torch: "2.14.0+cu132"
+  transformers: "5.24.1"
+  driver: "580.159.03"
+
+defaults:
+  port: 8000
+  host: 0.0.0.0          # LAN-reachable; no auth in this recipe
+  tensor_parallel: 1
+  gpu_memory_utilization: 0.90
+  kv_cache_dtype: fp8
+  # DGX Spark used 409600; 96 GiB VRAM cannot fit that plus weights and graphs.
+  max_model_len: 131072
+  max_num_seqs: 8
+  max_num_batched_tokens: 2048
+  served_model_name: inkling-2-mini
+  enable_prefix_caching: true
+  reasoning_parser: inkling
+  tool_call_parser: inkling
+  enable_auto_tool_choice: true
+
+speculative_config:
+  method: dspark
+  num_speculative_tokens: 7
+  draft_sample_method: probabilistic
+
+# Applied by patch_sm120_vision.py: the cu132 wheel's FA2 vision kernel emits
+# PTX that r580.159 cannot JIT, and FA3 has no sm_120 kernel. Only the vision
+# encoder switches to per-image PyTorch SDPA; decoder kernels are unchanged.
+compat_patches:
+  - patch_sm120_vision.py
+
+command: |
+  vllm serve thinkingmachines/Inkling-2-Mini \
+    --host {host} \
+    --port {port} \
+    --served-model-name {served_model_name} \
+    --tensor-parallel-size {tensor_parallel} \
+    --gpu-memory-utilization {gpu_memory_utilization} \
+    --kv-cache-dtype {kv_cache_dtype} \
+    --max-model-len {max_model_len} \
+    --max-num-batched-tokens {max_num_batched_tokens} \
+    --max-num-seqs {max_num_seqs} \
+    --enable-prefix-caching \
+    --reasoning-parser {reasoning_parser} \
+    --enable-auto-tool-choice \
+    --tool-call-parser {tool_call_parser} \
+    --speculative-config '{"method":"dspark","num_speculative_tokens":7,"draft_sample_method":"probabilistic"}'
